@@ -134,12 +134,12 @@ public:
 	// bitmaps
 	enum { _IDB_BITMAP			= IDB_BITMAP			};
 	enum { _IDB_16C_24			= IDB_16C_24			};
-	enum { _IDB_256C_16_DEFAULT = IDB_TRUE_16_DEFAULT	};
-	enum { _IDB_256C_16_HOT		= IDB_TRUE_16_HOT		};
-	enum { _IDB_256C_16_BW		= IDB_TRUE_16_BW		};
-	enum { _IDB_256C_24_DEFAULT = IDB_TRUE_24_DEFAULT	};
-	enum { _IDB_256C_24_HOT		= IDB_TRUE_24_HOT		};
-	enum { _IDB_256C_24_BW		= IDB_TRUE_24_BW		};
+	//enum { _IDB_256C_16_DEFAULT = IDB_TRUE_16_DEFAULT	};
+	//enum { _IDB_256C_16_HOT		= IDB_TRUE_16_HOT		};
+	//enum { _IDB_256C_16_BW		= IDB_TRUE_16_BW		};
+	//enum { _IDB_256C_24_DEFAULT = IDB_TRUE_24_DEFAULT	};
+	//enum { _IDB_256C_24_HOT		= IDB_TRUE_24_HOT		};
+	//enum { _IDB_256C_24_BW		= IDB_TRUE_24_BW		};
 	enum { _IDB_TRUE_16_DEFAULT = IDB_TRUE_16_DEFAULT	};
 	enum { _IDB_TRUE_16_HOT		= IDB_TRUE_16_HOT		};
 	enum { _IDB_TRUE_16_BW		= IDB_TRUE_16_BW		};
@@ -149,7 +149,7 @@ public:
 
 	// masks
 	enum { _MASK_TRUE_COLOR		= CLR_NONE				};
-	enum { _MASK_256_COLOR		= CLR_NONE				};
+	//enum { _MASK_256_COLOR		= CLR_NONE				};
 
 	// whether to allow a file is opened in the same window group during the plug-in execution.
 	enum { _ALLOW_OPEN_SAME_GROUP = TRUE				};
