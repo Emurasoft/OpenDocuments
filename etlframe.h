@@ -1,6 +1,6 @@
 /*
-	etlframe.h version 17.5
-	Copyright © 2018 by Emurasoft, Inc.
+	etlframe.h version 17.6
+	Copyright (c) 2018 Emurasoft, Inc.
 */
 
 #if _MSC_VER > 1000
@@ -309,9 +309,6 @@ public:
 		LRESULT lResult = 0;
 		if( wParam & BITMAP_24BIT_COLOR ){
 			lResult = T::_MASK_TRUE_COLOR;
-		}
-		else if( wParam & BITMAP_256_COLOR ){
-			lResult = T::_MASK_256_COLOR;
 		}
 		return lResult;
 	}
