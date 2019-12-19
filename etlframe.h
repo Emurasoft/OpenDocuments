@@ -1,6 +1,6 @@
 /*
-	etlframe.h version 17.6
 	Copyright (c) 2018 Emurasoft, Inc.
+	Licensed under the MIT license. See LICENSE for details.
 */
 
 #if _MSC_VER > 1000
@@ -73,6 +73,19 @@ HINSTANCE GetInstancePath( LPCTSTR szPath, bool bResourceOnly );
 
 #pragma warning( push )
 #pragma warning( disable : 4127 ) // C4127: conditional expression is constant
+
+extern HINSTANCE EEGetLocaleInstanceHandle();
+extern HINSTANCE EEGetInstanceHandle();
+extern BOOL IsFileExist( LPCTSTR pszPathName );
+extern BOOL GetModuleFile( LPTSTR szFileName );
+extern void GetModuleFilePath( LPCTSTR szFile, LPTSTR szPath );
+extern HINSTANCE GetInstancePath( LPCTSTR szPath );
+extern WORD EEGetCmdID();
+extern CETLFrameX* GetFrameFromFrame( HWND hwndFrame );
+extern CETLFrameX* GetFrame( HWND hwnd );
+extern CETLFrameX* GetFrameFromDlg( HWND hwnd );
+extern CETLFrameX* GetFrameFromView( HWND hwndView );
+
 
 // global data definition
 class CETLData
@@ -623,18 +636,6 @@ public:
 };
 
 
-extern HINSTANCE EEGetLocaleInstanceHandle();
-extern HINSTANCE EEGetInstanceHandle();
-extern BOOL IsFileExist( LPCTSTR pszPathName );
-extern BOOL GetModuleFile( LPTSTR szFileName );
-extern void GetModuleFilePath( LPCTSTR szFile, LPTSTR szPath );
-extern HINSTANCE GetInstancePath( LPCTSTR szPath );
-extern WORD EEGetCmdID();
-extern CETLFrameX* GetFrameFromFrame( HWND hwndFrame );
-extern CETLFrameX* GetFrame( HWND hwnd );
-extern CETLFrameX* GetFrameFromDlg( HWND hwnd );
-extern CETLFrameX* GetFrameFromView( HWND hwndView );
-
 #ifndef EE_EXTERN_ONLY
 HINSTANCE EEGetLocaleInstanceHandle()
 {
@@ -830,7 +831,10 @@ extern "C" void __stdcall OnEvents( HWND hwndView, UINT nEvent, LPARAM lParam )
 		_ASSERTE( _ETLData.m_wCmdID == 0 );
 		_ASSERTE( _ETLData.m_pETLFrameMap == NULL );
 		_ETLData.m_wCmdID = LOWORD( lParam );
-		_ETLData.m_pETLFrameMap = new CETLFrameMap;
+		if( _ETLData.m_pETLFrameMap == NULL ) {
+			_ETLData.m_pETLFrameMap = new CETLFrameMap;
+		}
+		_ASSERT( _ETLData.m_pETLFrameMap->size() == 0 );
 		if( Editor_GetVersion( hwndView ) < 5000 ){   // previous versions of EmEditor do not fire EVENT_CREATE_FRAME.
 			OnEvents( hwndView, EVENT_CREATE_FRAME, lParam );
 		}
