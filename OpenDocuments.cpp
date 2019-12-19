@@ -5,7 +5,8 @@
 #pragma warning( push )
 #pragma warning( disable : 4005 ) // macro redefinition
 #include "resource.h"
-#include "emedloce\resource.h"
+//#include "..\mui\opendocuments_loce\resource.h"
+#include "..\..\emedloce\resource.h"
 #pragma warning( pop )
 
 // the following line is needed before #include <etlframe.h>

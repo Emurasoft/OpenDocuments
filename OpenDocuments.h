@@ -227,14 +227,14 @@ public:
 		BOOL bEnableTab = (BOOL)Editor_Info( m_hWnd, EI_IS_WINDOW_COMBINED, 0 );
 		if( !bEnableTab )  return;
 
-		TCHAR sz[260];
+		//TCHAR sz[260];
 		TCHAR szAppName[80];
 		LoadString( EEGetLocaleInstanceHandle(), IDS_OPENDOCUMENTS_MENU_TEXT, szAppName, _countof( szAppName ) );
-		if( Editor_GetVersion( m_hWnd ) < 8000 ){
-			LoadString( EEGetLocaleInstanceHandle(), IDS_INVALID_VERSION, sz, _countof( sz ) );
-			MessageBox( m_hWnd, sz, szAppName, MB_OK | MB_ICONSTOP );
-			return;
-		}
+		//if( Editor_GetVersion( m_hWnd ) < 8000 ){
+		//	LoadString( EEGetLocaleInstanceHandle(), IDS_INVALID_VERSION, sz, _countof( sz ) );
+		//	MessageBox( m_hWnd, sz, szAppName, MB_OK | MB_ICONSTOP );
+		//	return;
+		//}
 
 		m_bIgnoreNMClick = GetProfileInt( EEREG_COMMON, NULL, _T("AutoSort"), 0 ) && GetProfileInt( EEREG_COMMON, NULL, _T("TabSort"), 0 ) == 3;
 

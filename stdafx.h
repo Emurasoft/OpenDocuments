@@ -27,11 +27,13 @@
 #include <atlbase.h>
 #include <atlstr.h>
 #pragma warning( push )
+#pragma warning( disable : 4838 ) // conversion from 'int' to 'UINT' requires a narrowing conversion
 #pragma warning( disable : 4996 ) // 'sprintf' was declared deprecated
-#include "wtl\atlapp.h"
+#pragma warning( disable : 4302 ) // 'type cast': truncation from 'LPCTSTR' to 'WORD'
+#include "..\..\wtl\atlapp.h"
 #pragma warning( pop )
 #include <atlwin.h>
-#include "wtl\atlctrls.h"
+#include "..\..\wtl\atlctrls.h"
 
 #ifdef _DEBUG
 #define VERIFY(f)          _ASSERTE(f)
