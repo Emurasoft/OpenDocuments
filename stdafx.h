@@ -12,7 +12,6 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <shtypes.h>
-#include <tchar.h>
 #include <malloc.h>
 #include <crtdbg.h>
 #include <olectl.h>
@@ -29,7 +28,7 @@
 #pragma warning( push )
 #pragma warning( disable : 4838 ) // conversion from 'int' to 'UINT' requires a narrowing conversion
 #pragma warning( disable : 4996 ) // 'sprintf' was declared deprecated
-#pragma warning( disable : 4302 ) // 'type cast': truncation from 'LPCTSTR' to 'WORD'
+#pragma warning( disable : 4302 ) // 'type cast': truncation from 'LPCWSTR' to 'WORD'
 #include "..\..\wtl\atlapp.h"
 #pragma warning( pop )
 #include <atlwin.h>
@@ -52,10 +51,10 @@ using namespace std;
 
 #ifdef _DEBUG
 #define TRACE	AfxTrace
-inline void __cdecl AfxTrace(LPCTSTR lpszFormat, ...)
+inline void __cdecl AfxTrace(LPCWSTR lpszFormat, ...)
 {
 	int nBuf;
-	TCHAR szBuffer[512];
+	WCHAR szBuffer[512];
 	va_list args;
 	va_start(args, lpszFormat);
 	nBuf = StringCchVPrintf( szBuffer, _countof( szBuffer ), lpszFormat, args );

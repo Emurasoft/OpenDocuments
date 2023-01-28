@@ -67,10 +67,10 @@ void CenterWindow( HWND hDlg )
 	::SetWindowPos(hDlg, NULL, xLeft, yTop, -1, -1, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
-void GetCurrDir( LPCTSTR pszPath, LPTSTR pszCurrDir )
+void GetCurrDir( LPCWSTR pszPath, LPWSTR pszCurrDir )
 {
 	if( *pszPath == '\"' ){  // grep title
-		LPCTSTR p = _tcschr( pszPath + 1, L'\"' );
+		LPCWSTR p = _tcschr( pszPath + 1, L'\"' );
 		if( !p )  return;
 		p++;
 		if( *p == ' ' )  p++;
@@ -84,7 +84,7 @@ void GetCurrDir( LPCTSTR pszPath, LPTSTR pszCurrDir )
 }
 
 
-bool IsPathEqual( LPCTSTR szPath1, LPCTSTR szPath2 )
+bool IsPathEqual( LPCWSTR szPath1, LPCWSTR szPath2 )
 {
 	//OSVERSIONINFO osvi;
 	//osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
@@ -176,7 +176,7 @@ public:
 	HWND m_hwndList;
 	WNDPROC m_lpOldListProc;
 	HIMAGELIST m_himl;
-	TCHAR m_szCurrDir[MAX_PATH];
+	WCHAR m_szCurrDir[MAX_PATH];
 	int m_iDefaultTabIcon;
 //	int m_iSetTextImage;
 	UINT m_nClientID;
@@ -227,8 +227,8 @@ public:
 		BOOL bEnableTab = (BOOL)Editor_Info( m_hWnd, EI_IS_WINDOW_COMBINED, 0 );
 		if( !bEnableTab )  return;
 
-		//TCHAR sz[260];
-		TCHAR szAppName[80];
+		//WCHAR sz[260];
+		WCHAR szAppName[80];
 		LoadString( EEGetLocaleInstanceHandle(), IDS_OPENDOCUMENTS_MENU_TEXT, szAppName, _countof( szAppName ) );
 		//if( Editor_GetVersion( m_hWnd ) < 8000 ){
 		//	LoadString( EEGetLocaleInstanceHandle(), IDS_INVALID_VERSION, sz, _countof( sz ) );
@@ -386,9 +386,9 @@ public:
 		return TRUE;
 	}
 
-	BOOL SetUninstall( HWND hDlg, LPTSTR pszUninstallCommand, LPTSTR pszUninstallParam )
+	BOOL SetUninstall( HWND hDlg, LPWSTR pszUninstallCommand, LPWSTR pszUninstallParam )
 	{
-		TCHAR szProductCode[80] = { 0 };
+		WCHAR szProductCode[80] = { 0 };
 		HKEY hKey = NULL;
 		if( RegOpenKeyEx( HKEY_LOCAL_MACHINE, _T("Software\\EmSoft\\EmEditorPlugIns\\OpenDocuments"), 0, KEY_READ, &hKey ) == ERROR_SUCCESS && hKey ){
 			GetProfileStringReg( hKey, _T("ProductCode"), szProductCode, _countof( szProductCode ), _T("") );
@@ -400,10 +400,10 @@ public:
 				return UNINSTALL_RUN_COMMAND;
 			}
 		}
-		TCHAR sz[80];
-		TCHAR szAppName[80];
-		LoadString( EEGetLocaleInstanceHandle(), IDS_SURE_TO_UNINSTALL, sz, sizeof( sz ) / sizeof( TCHAR ) );
-		LoadString( EEGetLocaleInstanceHandle(), IDS_OPENDOCUMENTS_MENU_TEXT, szAppName, sizeof( szAppName ) / sizeof( TCHAR ) );
+		WCHAR sz[80];
+		WCHAR szAppName[80];
+		LoadString( EEGetLocaleInstanceHandle(), IDS_SURE_TO_UNINSTALL, sz, sizeof( sz ) / sizeof( WCHAR ) );
+		LoadString( EEGetLocaleInstanceHandle(), IDS_OPENDOCUMENTS_MENU_TEXT, szAppName, sizeof( szAppName ) / sizeof( WCHAR ) );
 		if( MessageBox( hDlg, sz, szAppName, MB_YESNO | MB_ICONEXCLAMATION ) == IDYES ){
 			EraseProfile();
 			m_bUninstalling = true;
@@ -497,7 +497,7 @@ public:
 	BOOL OnInitDialog( HWND hwnd )
 	{
 		CenterWindow( hwnd );
-		TCHAR sz[256];
+		WCHAR sz[256];
 		for( int i = 0; i < 4; i++ ){
 			LoadString( EEGetLocaleInstanceHandle(), IDS_POS_LEFT + i, sz, _countof( sz ) );
 			SendDlgItemMessage( hwnd, IDC_COMBO_POS, CB_ADDSTRING, 0, (LPARAM)sz );
@@ -506,6 +506,7 @@ public:
 		LoadString( EEGetLocaleInstanceHandle(), IDS_OPENDOCUMENTS_MENU_TEXT, sz, _countof( sz ) );
 		SetWindowText( hwnd, sz );
 		m_iOldPos = m_iPos;
+		Editor_Info( m_hWnd, EI_WM_INITDIALOG, (LPARAM)hwnd );
 		return TRUE;
 	}
 	
@@ -544,7 +545,7 @@ public:
 		DWORD dwFlags = LVS_EX_FULLROWSELECT | LVS_EX_ONECLICKACTIVATE | LVS_EX_LABELTIP | LVS_EX_ONECLICKACTIVATE | LVS_EX_UNDERLINEHOT;
 		ListView_SetExtendedListViewStyleEx( m_hwndList, dwFlags, dwFlags );
 
-		TCHAR szText[32] = { 0 };
+		WCHAR szText[32] = { 0 };
 		LV_COLUMN lvC;
 		ZeroMemory( &lvC, sizeof(lvC) );
 		lvC.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
@@ -556,7 +557,7 @@ public:
 		lvC.cx = 100000;
 		VERIFY( ListView_InsertColumn( m_hwndList, nIndex, &lvC ) != -1 );
 
-		TCHAR szPath[MAX_PATH];
+		WCHAR szPath[MAX_PATH];
 		GetModuleFileName( NULL, szPath, _countof( szPath ) );
 		SHFILEINFO sfi;
 		m_himl = (HIMAGELIST)SHGetFileInfo( szPath, 0, &sfi, sizeof( sfi ), SHGFI_SYSICONINDEX | SHGFI_SMALLICON );
@@ -569,7 +570,7 @@ public:
 	}
 
 
-	int GetIconImage( LPCTSTR pszPath )
+	int GetIconImage( LPCWSTR pszPath )
 	{
 		int iImage = m_iDefaultTabIcon;
 		if( pszPath[0] ){
@@ -622,7 +623,6 @@ public:
 		_ASSERT( iDoc >= 0 );
 		if( iDoc >= 0 ){
 			int iFound = FindDocFromList( hDoc );
-			_ASSERT( iFound >= 0 );
 			if( iFound >= 0 ){
 				ListView_DeleteItem( m_hwndList, iFound );
 			}
@@ -756,9 +756,9 @@ public:
 		int iDoc = (int)Editor_Info( m_hWnd, EI_GET_ACTIVE_INDEX, 0 );
 		_ASSERT( iDoc >= 0 );
 		if( iDoc >= 0 ){
-			TCHAR szOldDir[MAX_PATH];
+			WCHAR szOldDir[MAX_PATH];
 			StringCopy( szOldDir, MAX_PATH, m_szCurrDir );
-			TCHAR szPath[MAX_PATH] = { 0 };
+			WCHAR szPath[MAX_PATH] = { 0 };
 			Editor_DocInfo( m_hWnd, iDoc, EI_GET_FILE_NAMEW, (LPARAM)szPath );
 			GetCurrDir( szPath, m_szCurrDir );
 			if( m_nViewType == VIEW_BLEND ){
@@ -790,9 +790,9 @@ public:
 		int iActiveDoc = (int)Editor_Info( m_hWnd, EI_GET_ACTIVE_INDEX, 0 );
 		ListView_Update( m_hwndList, iActiveDoc );
 
-		TCHAR szOldDir[MAX_PATH];
+		WCHAR szOldDir[MAX_PATH];
 		StringCopy( szOldDir, MAX_PATH, m_szCurrDir );
-		TCHAR szPath[MAX_PATH] = { 0 };
+		WCHAR szPath[MAX_PATH] = { 0 };
 		Editor_DocInfo( m_hWnd, iActiveDoc, EI_GET_FILE_NAMEW, (LPARAM)szPath );
 		GetCurrDir( szPath, m_szCurrDir );
 		if( m_nViewType == VIEW_BLEND ){
@@ -814,7 +814,7 @@ public:
 //				_ASSERT( pGetDispInfo->item.iItem < ListView_GetItemCount() );
 				int nCount = (int)Editor_Info( m_hWnd, EI_GET_DOC_COUNT, 0 );
 				if( pGetDispInfo->item.iItem < nCount ){
-					TCHAR szPath[MAX_PATH] = { 0 };
+					WCHAR szPath[MAX_PATH] = { 0 };
 					Editor_DocInfo( m_hWnd, pGetDispInfo->item.iItem, EI_GET_FILE_NAMEW, (LPARAM)szPath );
 					if( pGetDispInfo->item.mask & LVIF_IMAGE ){
 						pGetDispInfo->item.iImage = szPath[0] ? GetIconImage( szPath ) : m_iDefaultTabIcon;
@@ -822,7 +822,7 @@ public:
 					if( pGetDispInfo->item.mask & LVIF_TEXT ){
 						bool bShortTitle;
 						if( m_nViewType == VIEW_BLEND ){
-							TCHAR szDir[MAX_PATH];
+							WCHAR szDir[MAX_PATH];
 							GetCurrDir( szPath, szDir );
 							bShortTitle = IsPathEqual( szDir, m_szCurrDir );
 						}
@@ -832,7 +832,7 @@ public:
 						else {
 							bShortTitle = false;
 						}
-						TCHAR szTitle[MAX_PATH] = { 0 };
+						WCHAR szTitle[MAX_PATH] = { 0 };
 						Editor_DocInfo( m_hWnd, pGetDispInfo->item.iItem, bShortTitle ? EI_GET_SHORT_TITLEW : EI_GET_FULL_TITLEW, (LPARAM)szTitle );
 						StringCopy( pGetDispInfo->item.pszText, pGetDispInfo->item.cchTextMax, szTitle );
 					}
@@ -976,7 +976,7 @@ public:
 
 		SetMenuDefaultItem( hMenu, ID_ACTIVATE, FALSE );
 
-		int nID = TrackPopupMenu( hMenu, (GetSystemMetrics( SM_MENUDROPALIGNMENT ) ? TPM_RIGHTALIGN : TPM_LEFTALIGN) | TPM_RIGHTBUTTON | TPM_RETURNCMD, pptPos->x, pptPos->y, 0, m_hwndList, NULL );
+		int nID = TrackPopupMenu( hMenu, GetMenuAlign() | TPM_RIGHTBUTTON | TPM_RETURNCMD, pptPos->x, pptPos->y, 0, m_hwndList, NULL );
 		DestroyMenu( hMainMenu );
 
 		switch( nID ){
@@ -1176,6 +1176,26 @@ INT_PTR CALLBACK PropDlg( HWND hwnd, UINT msg, WPARAM wParam, LPARAM /*lParam*/ 
 			CMyFrame* pFrame = static_cast<CMyFrame*>(GetFrameFromDlg( hwnd ));
 			_ASSERTE( pFrame );
 			pFrame->OnDlgCommand( hwnd, wParam );
+		}
+		break;
+	case WM_CTLCOLORDLG:
+	case WM_CTLCOLORSTATIC:
+	case WM_CTLCOLOREDIT:
+	case WM_CTLCOLORBTN:
+	case WM_CTLCOLORLISTBOX:
+		{
+			CMyFrame* pFrame = static_cast<CMyFrame*>( GetFrame( hwnd ) );
+			if( pFrame ) {
+				return Editor_Info( pFrame->m_hWnd, EI_WM_CTLCOLOR, wParam );
+			}
+		}
+		break;
+	case WM_THEMECHANGED:
+		{
+			CMyFrame* pFrame = static_cast<CMyFrame*>( GetFrame( hwnd ) );
+			if( pFrame ) {
+				Editor_Info( pFrame->m_hWnd, EI_WM_THEMECHANGED, (LPARAM)hwnd );
+			}
 		}
 		break;
 	}
